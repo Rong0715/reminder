@@ -5,15 +5,16 @@ const reminderDate = document.getElementById("reminderDate");
 const prioritySelect = document.getElementById("prioritySelect");
 const addButton = document.getElementById("addButton");
 const remindersList = document.getElementById("remindersList");
+const modalWindow = document.getElementById("editModal");
+const modalText = document.getElementById("editReminderInput");
+const modalDate = document.getElementById("editReminderDate");
+const modalPriority = document.getElementById("editPrioritySelect");
+const modalClose = document.getElementById("modalClose");
+const modalSave = document.getElementById("saveEditButton");
 
 // Set default date-time value to current date and time
 const now = new Date();
-const year = now.getFullYear();
-const month = String(now.getMonth() + 1).padStart(2, "0");
-const day = String(now.getDate()).padStart(2, "0");
-const hours = String(now.getHours()).padStart(2, "0");
-const minutes = String(now.getMinutes()).padStart(2, "0");
-reminderDate.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+reminderDate.value = toLocalDateTimeString(now);
 
 // Date format
 const daysInAWeek = [
@@ -47,6 +48,7 @@ class Reminder {
     this.dateDue = dateDue;
     this.priority = priority;
     this.dateCreation = dateCreation;
+    this.id = this.dateCreation.toISOString();
   }
   getText() {
     return this.text;
@@ -59,6 +61,9 @@ class Reminder {
   }
   getDateCreation() {
     return this.dateCreation;
+  }
+  getId() {
+    return this.id;
   }
   setText(text) {
     this.text = text;
@@ -73,6 +78,8 @@ class Reminder {
 
 // Existing Reminders
 let reminders = [];
+
+let toEditId;
 
 /*
 graph TD
@@ -124,7 +131,24 @@ Task 4: Reminder Actions
 - Implement mark as complete functionality
 - Add delete reminder feature
 - Add edit reminder capability
+*/
 
+remindersList.addEventListener("click", reminderOperation);
+modalClose.addEventListener("click", (e) => {
+  e.preventDefault();
+  modalWindow.style.display = "none";
+});
+modalSave.addEventListener("click", (e) => {
+  e.preventDefault();
+  const reminder = findReminder(toEditId);
+  reminder.setText(modalText.value);
+  reminder.setDateDue(new Date(modalDate.value));
+  reminder.setPriority(modalPriority.value);
+  modalWindow.style.display = "none";
+  updateUI();
+});
+
+/*
 Task 5: Data Persistence
 - Save reminders to localStorage
 - Load reminders when page loads
@@ -178,12 +202,21 @@ function insertHTML(reminder) {
 }
 
 function buildReminderItem(reminder) {
-  const html = `<div class="reminder-item priority-${reminder.getPriority()}">
-            <div class="reminder-content">
-                <h3>${reminder.getText()}</h3>
-                <p>Due: ${formatDate(reminder.getDateDue(), true)}</p>
-            </div>
-        </div>`;
+  const html = `
+  <div id="${reminder.getId()}">
+    <div class="reminder-item priority-${reminder.getPriority()}">
+      <div class="reminder-content">
+        <h3 id="${reminder.getId()} text">${reminder.getText()}</h3>
+        <p>Due: ${formatDate(reminder.getDateDue(), true)}</p>
+      </div>
+      <div class="todo-buttons">
+          <button class="btn btn-complete" id="${reminder.getId()} complete">✓</button>
+          <button class="btn btn-edit" id="${reminder.getId()} edit">✎</button>
+          <button class="btn btn-delete" id="${reminder.getId()} delete">×</button>
+      </div>
+    </div>
+  </div>
+    `;
   return html;
 }
 
@@ -197,4 +230,56 @@ function sortByDue(reminders, closestFirst = false) {
       return a.getDateDue() > b.getDateDue() ? 1 : -1;
     });
   }
+}
+
+function btnSelector(id, btn) {
+  return document.getElementById(id + " " + btn);
+}
+
+function reminderOperation(e) {
+  const target = e.target;
+  const [id, operation] = target.id.split(" ");
+
+  switch (operation) {
+    case "complete":
+      handleComplete(id);
+      break;
+    case "edit":
+      hanldeEdit(id);
+      break;
+    case "delete":
+      handleDelete(id);
+      break;
+  }
+}
+
+function handleComplete(id) {
+  console.log("Completed!");
+}
+function hanldeEdit(id) {
+  console.log("Edited!");
+  toEditId = id;
+  const editReminder = findReminder(id);
+  modalText.value = editReminder.getText();
+  modalDate.value = toLocalDateTimeString(editReminder.getDateDue());
+  modalWindow.style.display = "block";
+}
+function handleDelete(id) {
+  console.log("Deleted!");
+  document.getElementById(id).innerHTML = "";
+  deleteIdx = reminders.findIndex(({ id }) => id === id);
+  reminders.splice(deleteIdx, 1);
+}
+
+function findReminder(targetId) {
+  return reminders[reminders.findIndex(({ id }) => id === targetId)];
+}
+
+function toLocalDateTimeString(date) {
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
 }

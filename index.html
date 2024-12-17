@@ -44,6 +44,28 @@
       </div>
     </div>
 
+    <!-- Add this modal structure before the script tag -->
+    <div class="modal" id="editModal">
+      <div class="modal-content">
+        <span class="close-modal" id="modalClose">&times;</span>
+        <h2>Edit Reminder</h2>
+        <div class="edit-form">
+          <input
+            type="text"
+            id="editReminderInput"
+            placeholder="Edit reminder..."
+          />
+          <input type="datetime-local" id="editReminderDate" />
+          <select id="editPrioritySelect">
+            <option value="low">Low Priority</option>
+            <option value="medium">Medium Priority</option>
+            <option value="high">High Priority</option>
+          </select>
+          <button id="saveEditButton">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Link to your JavaScript file -->
     <script src="script.js"></script>
   </body>
