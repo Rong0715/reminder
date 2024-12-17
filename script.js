@@ -186,6 +186,8 @@ Task 6: Validation
 - Validate input fields
 - Show error messages for invalid inputs
 - Prevent duplicate reminders
+
+DONE
 */
 
 /*
@@ -284,7 +286,7 @@ function reminderOperation(e) {
       handleComplete(id);
       break;
     case "edit":
-      hanldeEdit(id);
+      handleEdit(id);
       break;
     case "delete":
       handleDelete(id);
@@ -299,7 +301,7 @@ function handleComplete(id) {
   const editReminder = findReminder(id);
   editReminder.setCompleted(true);
 }
-function hanldeEdit(id) {
+function handleEdit(id) {
   console.log("Edited!");
   toEditId = id;
   const editReminder = findReminder(id);
@@ -310,7 +312,7 @@ function hanldeEdit(id) {
 function handleDelete(id) {
   console.log("Deleted!");
   document.getElementById(id).innerHTML = "";
-  deleteIdx = reminders.findIndex(({ id }) => id === id);
+  deleteIdx = reminders.findIndex((reminder) => reminder.id === id);
   reminders.splice(deleteIdx, 1);
 }
 
