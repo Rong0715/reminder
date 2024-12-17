@@ -43,13 +43,20 @@ const monthsInAYear = [
 
 // Reminder object
 class Reminder {
-  constructor(text, dateDue, priority, dateCreation = new Date()) {
+  constructor(
+    text,
+    dateDue,
+    priority,
+    dateCreation = new Date(),
+    id = dateCreation.toISOString(),
+    completed = false
+  ) {
     this.text = text;
     this.dateDue = dateDue;
     this.priority = priority;
     this.dateCreation = dateCreation;
-    this.id = this.dateCreation.toISOString();
-    this.completed = false;
+    this.id = id;
+    this.completed = completed;
   }
   getText() {
     return this.text;
@@ -131,6 +138,7 @@ Task 3: Display Reminders
 - Show date in a readable format
 */
 
+load();
 updateUI();
 
 /*
@@ -196,6 +204,7 @@ function addNewReminder(e) {
 }
 
 function updateUI() {
+  save();
   if (reminders.length === 0) {
     remindersList.innerHTML = "<p>Your reminders will be here...</p>";
     return;
@@ -292,4 +301,27 @@ function toLocalDateTimeString(date) {
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
   return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+function save() {
+  localStorage.setItem("remindersList", JSON.stringify(reminders));
+}
+
+function load() {
+  if (localStorage.getItem("remindersList")) {
+    reminders = JSON.parse(localStorage.getItem("remindersList"));
+    reminders = reminders.map(
+      ({ text, dateDue, priority, dateCreation, id, completed }) => {
+        return new Reminder(
+          text,
+          new Date(dateDue),
+          priority,
+          new Date(dateCreation),
+          id,
+          completed
+        );
+      }
+    );
+    console.log(reminders);
+  }
 }
