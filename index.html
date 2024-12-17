@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Elegant Reminder</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Google Fonts - Using Space Mono for the tech look -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Main container -->
+    <div class="container">
+      <!-- App header -->
+      <header>
+        <h1>Reminders</h1>
+        <p class="date" id="currentDate"><!-- JS will populate this --></p>
+      </header>
+
+      <!-- Add new reminder section -->
+      <div class="add-reminder">
+        <input
+          type="text"
+          id="reminderInput"
+          placeholder="Add new reminder..."
+        />
+        <input type="datetime-local" id="reminderDate" />
+        <select id="prioritySelect">
+          <option value="low">Low Priority</option>
+          <option value="medium">Medium Priority</option>
+          <option value="high">High Priority</option>
+        </select>
+        <button id="addButton">Add</button>
+      </div>
+
+      <!-- Reminders list container -->
+      <div class="reminders-container">
+        <div class="reminders-list" id="remindersList">
+          <!-- JS will populate this -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Link to your JavaScript file -->
+    <script src="script.js"></script>
+  </body>
+</html>
