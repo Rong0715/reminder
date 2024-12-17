@@ -49,6 +49,7 @@ class Reminder {
     this.priority = priority;
     this.dateCreation = dateCreation;
     this.id = this.dateCreation.toISOString();
+    this.completed = false;
   }
   getText() {
     return this.text;
@@ -65,6 +66,9 @@ class Reminder {
   getId() {
     return this.id;
   }
+  isCompleted() {
+    return this.completed;
+  }
   setText(text) {
     this.text = text;
   }
@@ -73,6 +77,9 @@ class Reminder {
   }
   setPriority(priority) {
     this.priority = priority;
+  }
+  setCompleted(isCompleted) {
+    this.completed = isCompleted;
   }
 }
 
@@ -194,19 +201,17 @@ function updateUI() {
   }
   remindersList.innerHTML = "";
   const sortedReminders = sortByDue(reminders, true);
-  sortedReminders.forEach((reminder) => insertHTML(reminder));
+  sortedReminders.forEach((reminder) => insertReminderItem(reminder));
 }
 
-function insertHTML(reminder) {
-  remindersList.insertAdjacentHTML("afterbegin", buildReminderItem(reminder));
-}
-
-function buildReminderItem(reminder) {
+function insertReminderItem(reminder) {
   const html = `
   <div id="${reminder.getId()}">
     <div class="reminder-item priority-${reminder.getPriority()}">
       <div class="reminder-content">
-        <h3 id="${reminder.getId()} text">${reminder.getText()}</h3>
+        <h3 id="${reminder.getId()} text" ${
+    reminder.isCompleted() ? 'class="completed"' : ""
+  }>${reminder.getText()}</h3>
         <p>Due: ${formatDate(reminder.getDateDue(), true)}</p>
       </div>
       <div class="todo-buttons">
@@ -217,7 +222,7 @@ function buildReminderItem(reminder) {
     </div>
   </div>
     `;
-  return html;
+  remindersList.insertAdjacentHTML("afterbegin", html);
 }
 
 function sortByDue(reminders, closestFirst = false) {
@@ -251,10 +256,14 @@ function reminderOperation(e) {
       handleDelete(id);
       break;
   }
+
+  updateUI();
 }
 
 function handleComplete(id) {
   console.log("Completed!");
+  const editReminder = findReminder(id);
+  editReminder.setCompleted(true);
 }
 function hanldeEdit(id) {
   console.log("Edited!");
