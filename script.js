@@ -156,6 +156,15 @@ modalClose.addEventListener("click", (e) => {
 modalSave.addEventListener("click", (e) => {
   e.preventDefault();
   const reminder = findReminder(toEditId);
+  if (
+    !(
+      inputErrorHandler(modalText.value, "text") &&
+      inputErrorHandler(modalDate.value, "date")
+    )
+  ) {
+    modalWindow.style.display = "none";
+    return;
+  }
   reminder.setText(modalText.value);
   reminder.setDateDue(new Date(modalDate.value));
   reminder.setPriority(modalPriority.value);
@@ -169,11 +178,17 @@ Task 5: Data Persistence
 - Load reminders when page loads
 - Update localStorage when reminders change
 
+DONE
+*/
+
+/*
 Task 6: Validation
 - Validate input fields
 - Show error messages for invalid inputs
 - Prevent duplicate reminders
+*/
 
+/*
 Task 7: Sorting and Filtering
 - Add ability to sort by date or priority
 - Filter reminders by status (complete/incomplete)
@@ -195,6 +210,15 @@ function formatDate(date, showHour = false) {
 
 function addNewReminder(e) {
   e.preventDefault();
+  if (
+    !(
+      inputErrorHandler(reminderInput.value, "text") &&
+      inputErrorHandler(reminderDate.value, "date")
+    )
+  ) {
+    console.error("Reminder can't be created with given input.");
+    return;
+  }
   const text = reminderInput.value;
   const dateDue = new Date(reminderDate.value);
   const priority = prioritySelect.value;
@@ -323,5 +347,26 @@ function load() {
       }
     );
     console.log(reminders);
+  }
+}
+
+function inputErrorHandler(input, type) {
+  switch (type) {
+    case "text":
+      if (input.length >= 100) {
+        console.error("Text too long, be easy to yourself.");
+        return false;
+      }
+      if (input.length == 0) {
+        console.error("You can't create empty reminder.");
+        return false;
+      }
+      return true;
+    case "date":
+      if (new Date(input) < new Date()) {
+        console.error("Life is going forward, no reminder for the past.");
+        return false;
+      }
+      return true;
   }
 }
